@@ -7,7 +7,8 @@
     "dev": "vite --host",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prisma:start_db": "npx prisma dev @0.0.0-dev.202509301625"
   },
   "dependencies": {
     "react": "^19.1.1",
