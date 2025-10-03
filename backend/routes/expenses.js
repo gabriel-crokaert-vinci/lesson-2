@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const expensesService = require('../services/expenses.js');
 
 router.get('/', (req, res) => {
   try {
@@ -15,7 +14,6 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   try {
     const newExpense = {
-      id: Date.now().toString(),
       date: req.body.date,
       description: req.body.description,
       payer: req.body.payer,

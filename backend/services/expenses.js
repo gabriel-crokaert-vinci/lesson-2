@@ -1,24 +1,21 @@
 const fs = require('fs');
 const path = require('path');
+const { PrismaClient } = require('../generated/prisma');
 
-const EXPENSES_FILE_PATH = path.join(__dirname, '../data/expenses.json');
-const EXPENSES_INIT_FILE_PATH = path.join(__dirname, '../data/expenses.init.json');
+const prisma = new PrismaClient();
 
-function getAllExpenses() {
-  const data = fs.readFileSync(EXPENSES_FILE_PATH, 'utf8');
-  return JSON.parse(data);
+async function getAllExpenses() {
+  return await prisma.expense.findMany();
 }
 
-function addExpense(expense) {
-  const expenses = getAllExpenses();
-  expenses.push(expense);
-
-  const updatedExpenses = JSON.stringify(expenses, null, 2);
-  fs.writeFileSync(EXPENSES_FILE_PATH, updatedExpenses);
+async function addExpense(expense) {
+  await prisma.expense.create({
+    data: expense
+  });
   return expense;
 }
 
-function resetExpenses() {
+async function resetExpenses() {
   const initData = fs.readFileSync(EXPENSES_INIT_FILE_PATH, 'utf8');
   fs.writeFileSync(EXPENSES_FILE_PATH, initData);
   return JSON.parse(initData);
