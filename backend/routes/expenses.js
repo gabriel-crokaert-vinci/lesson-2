@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const expensesService = require('../services/expenses');
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const expenses = expensesService.getAllExpenses();
+    const expenses = await expensesService.getAllExpenses();
     res.json(expenses);
   } catch (error) {
     console.error('Error retrieving expenses:', error);
@@ -11,7 +12,7 @@ router.get('/', (req, res) => {
   }
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const newExpense = {
       date: req.body.date,
@@ -20,7 +21,7 @@ router.post('/', (req, res) => {
       amount: parseFloat(req.body.amount),
     };
 
-    const addedExpense = expensesService.addExpense(newExpense);
+    const addedExpense = await expensesService.addExpense(newExpense);
     res.status(201).json(addedExpense);
   } catch (error) {
     console.error('Error adding expense:', error);
@@ -28,11 +29,10 @@ router.post('/', (req, res) => {
   }
 });
 
-router.post('/reset', (req, res) => {
+router.post('/reset', async (req, res) => {
   try {
-    const resetData = expensesService.resetExpenses();
+    const resetData = await expensesService.resetExpenses();
     res.json({
-      message: 'Expenses reset successfully',
       data: resetData,
     });
   } catch (error) {

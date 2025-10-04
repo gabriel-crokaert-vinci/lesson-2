@@ -13,7 +13,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const sendApiRequestandHandleError = async (method: string = 'GET', path: string, body?: any) => {
+  const sendApiRequestandHandleError = async (method: string = 'GET', path: string, body?: unknown) => {
     try {
       const response = await fetch(`${host}/api/${path}`, {
         method: method,
@@ -36,6 +36,7 @@ export default function Home() {
     try {
       setLoading(true);
       const data = await sendApiRequestandHandleError('GET', 'expenses');
+      console.log('Fetched expenses:', data);
       setExpenses(data);
       setError(null);
     } finally {
@@ -67,18 +68,20 @@ export default function Home() {
   const handleAlgoChange = (algo: (a: Expense, b: Expense) => number) => {
     setSortingAlgo(() => algo); // Pay attention here, we're wrapping algo in a function because useState setter accept either a value or a function returning a value.
   };
-
+  console.log('Rendering Home with expenses:', expenses);
   const sortedExpenses = expenses.sort(sortingAlgo);
 
   if (loading) {
-    return <div>Loading expenses...</div>;
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
   }
 
   return (
     <div>
-      <h1>Expense Sharing App</h1>
-
-      {error && <div>Error: {error}</div>}
+      <h1>Expense Tracker</h1>
 
       <div>
         <ExpenseAdd addExpense={handleAddExpense} />
@@ -93,7 +96,7 @@ export default function Home() {
         {sortedExpenses.length === 0 ? (
           <p>No expenses found.</p>
         ) : (
-          sortedExpenses.map((expense) => <ExpenseItem key={expense.id} expense={expense} />)
+          sortedExpenses.map((expense) => <ExpenseItem key={expense.date} expense={expense} />)
         )}
       </div>
     </div>

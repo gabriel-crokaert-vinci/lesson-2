@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { PrismaClient } = require('../generated/prisma');
+const e = require('express');
 
 const prisma = new PrismaClient();
 
@@ -16,9 +17,8 @@ async function addExpense(expense) {
 }
 
 async function resetExpenses() {
-  const initData = fs.readFileSync(EXPENSES_INIT_FILE_PATH, 'utf8');
-  fs.writeFileSync(EXPENSES_FILE_PATH, initData);
-  return JSON.parse(initData);
+  await prisma.expense.deleteMany();
+  return [];
 }
 
 module.exports = {
