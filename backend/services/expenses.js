@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { PrismaClient } = require('../generated/prisma');
+const { PrismaClient } = require('../generated/prisma/client'); 
 const e = require('express');
 
 const prisma = new PrismaClient();
