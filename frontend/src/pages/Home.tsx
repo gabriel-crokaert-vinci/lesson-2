@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import ExpenseItem from '../components/ExpenseItem';
 import ExpenseAdd from '../components/ExpenseAdd';
 import ExpenseSorter from '../components/ExpenseSorter';
-import type { Expense } from '../types/Expense';
+import ExpenseAddViaForm from '../components/ExpenseForm';
+import type { Expense, ExpenseInput } from '../types/Expense';
 
 const host = import.meta.env.VITE_API_URL || 'http://unknown-api-url.com';
 
@@ -48,12 +49,14 @@ export default function Home() {
     fetchExpenses();
   }, []);
 
-  const handleAddExpense = async (newExpense: Expense) => {
-    const newExpensesOptimistic = [newExpense, ...expenses]; // Optimistically update the state, whatever the sort method, add on top
-    setExpenses(newExpensesOptimistic);
-    const addedExpense = await sendApiRequestandHandleError('POST', 'expenses', newExpense);
-    const newExpensesActual = [addedExpense, ...expenses]; // Now that we have the actual added expense with id from backend, let's use it instead of the optimistically added one
-    setExpenses(newExpensesActual);
+  const handleAddExpense = async (newExpense: ExpenseInput) => {
+    try {
+      const addedExpense = await sendApiRequestandHandleError('POST', 'expenses', newExpense);
+      // addedExpense sera de type Expense (avec id)
+      setExpenses(prev => [...prev, addedExpense]);
+    } catch (error) {
+      console.error('Error adding expense:', error);
+    }
   };
 
   const handleResetData = async () => {
@@ -82,6 +85,8 @@ export default function Home() {
   return (
     <div>
       <h1>Expense Tracker</h1>
+
+      <ExpenseAddViaForm />
 
       <div>
         <ExpenseAdd addExpense={handleAddExpense} />
